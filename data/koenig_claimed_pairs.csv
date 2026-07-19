@@ -1,0 +1,13 @@
+action_date,action,claimed_disaster,claimed_disaster_onset,notes
+1991-10-30,Madrid Conference opens,Perfect Storm hits New England / Bush Kennebunkport home,1991-10-30,Storm ~$200M so BELOW NOAA billion-dollar threshold; storm formed Oct 28 before the conference
+1992-08-24,Madrid track resumes in Washington,Hurricane Andrew Florida landfall,1992-08-24,Timing genuine
+1994-01-16,Clinton-Assad Geneva summit,Northridge earthquake,1994-01-17,Earthquake: excluded from NOAA weather/climate dataset by design; FEMA DR-1008
+1998-01-20,Clinton pressures Netanyahu at White House,Lewinsky scandal breaks,1998-01-21,Not a natural disaster; category elasticity in the claim set
+1998-09-27,Arafat-Clinton meeting / Albright 13 percent push,Hurricane Georges Gulf landfall,1998-09-28,Timing genuine
+1998-10-17,Wye River summit in session,Texas October flooding,1998-10-17,Timing genuine
+1999-05-04,Arafat statehood-declaration deadline (postponed at US urging),Oklahoma-Kansas F5 outbreak,1999-05-03,Claimed disaster occurred the day BEFORE the action date
+2001-06-08,Tenet ceasefire mission in region,Tropical Storm Allison floods Houston,2001-06-05,Storm formed 3 days BEFORE claimed trigger
+2003-04-30,Road Map presented,Record May tornado week,2003-05-04,Timing genuine (4-day gap)
+2005-08-15,Gaza disengagement evictions begin,Hurricane Katrina,2005-08-25,Katrina formed Aug 23; landfall FL Aug 25 LA Aug 29
+2008-09-13,Rice Annapolis-process pressure,Hurricane Ike landfall / Lehman collapse,2008-09-13,Ike timing genuine; Lehman not a natural disaster
+2011-05-19,Obama 1967-lines speech,Joplin EF5 tornado,2011-05-22,3-day gap (often retold as 24 hours)

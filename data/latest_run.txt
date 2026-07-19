@@ -1,0 +1,63 @@
+NOAA onsets since 1991: 363 (through 2024-10-09)
+FEMA unique natural-disaster onset days since 1991: 1423 (through 2026-06-17)
+
+list       dataset                win   hits  expected  p(shift)  p(yshuf)   q(FDR)
+PRESSURE   NOAA billion-dollar    +3d   5/37       4.2    0.4200    0.4170   0.8989
+PRESSURE   NOAA billion-dollar    +7d   7/37       7.9    0.6893    0.7769   0.8989
+PRESSURE   NOAA billion-dollar   +14d  12/37      13.0    0.6838    0.7888   0.8989
+PRESSURE   NOAA billion-dollar    ±3d  10/37       7.0    0.1542    0.3113   0.6150
+PRESSURE   NOAA billion-dollar    ±7d  12/37      13.0    0.6819    0.8361   0.8989
+PRESSURE   FEMA declarations      +3d  15/37      12.2    0.2022    0.3267   0.6150
+PRESSURE   FEMA declarations      +7d  27/37      19.4    0.0101    0.0235   0.1675
+PRESSURE   FEMA declarations     +14d  32/37      27.1    0.0436    0.0774   0.2907
+PRESSURE   FEMA declarations      ±3d  21/37      17.9    0.1883    0.4013   0.6150
+PRESSURE   FEMA declarations      ±7d  33/37      27.1    0.0167    0.0338   0.1675
+PRO-ISRAEL NOAA billion-dollar    +3d   1/12       1.4    0.7306    0.6563   0.8989
+PRO-ISRAEL NOAA billion-dollar    +7d   2/12       2.6    0.7046    0.5937   0.8989
+PRO-ISRAEL NOAA billion-dollar   +14d   4/12       4.2    0.6051    0.4463   0.8989
+PRO-ISRAEL NOAA billion-dollar    ±3d   4/12       2.3    0.2152    0.0744   0.6150
+PRO-ISRAEL NOAA billion-dollar    ±7d   5/12       4.2    0.4466    0.1994   0.8989
+PRO-ISRAEL FEMA declarations      +3d   3/12       3.9    0.8090    0.7236   0.8989
+PRO-ISRAEL FEMA declarations      +7d   4/12       6.3    0.9418    0.8918   0.9700
+PRO-ISRAEL FEMA declarations     +14d   6/12       8.8    0.9700    0.9566   0.9700
+PRO-ISRAEL FEMA declarations      ±3d   6/12       5.8    0.5671    0.4608   0.8989
+PRO-ISRAEL FEMA declarations      ±7d   8/12       8.8    0.7947    0.7356   0.8989
+
+Per-event nearest NOAA billion-dollar onset (pressure list, days after event):
+  1991-09-12  next onset in   19 days
+  1991-10-30  next onset in  146 days
+  1991-12-10  next onset in  105 days
+  1992-02-24  next onset in   29 days
+  1992-08-24  next onset in   18 days
+  1993-09-13  next onset in  126 days
+  1994-01-16  next onset in    1 days
+  1994-05-04  next onset in   28 days
+  1995-09-28  next onset in    6 days
+  1997-01-15  next onset in   19 days
+  1998-01-20  next onset in  115 days
+  1998-05-04  next onset in   11 days
+  1998-10-23  next onset in   58 days
+  1999-05-04  next onset in   28 days
+  2000-07-11  next onset in   84 days
+  2000-12-23  next onset in  104 days
+  2001-04-30  next onset in    0 days
+  2001-06-13  next onset in  261 days
+  2001-10-02  next onset in  150 days
+  2002-03-12  next onset in   46 days
+  2002-06-24  next onset in   38 days
+  2003-04-30  next onset in    3 days
+  2003-06-04  next onset in   30 days
+  2004-04-14  next onset in   37 days
+  2005-08-15  next onset in   10 days
+  2007-11-27  next onset in   35 days
+  2008-09-13  next onset in  110 days
+  2009-05-18  next onset in   14 days
+  2009-06-04  next onset in    5 days
+  2010-03-09  next onset in   52 days
+  2010-09-02  next onset in   33 days
+  2011-05-19  next onset in    3 days
+  2013-07-29  next onset in    8 days
+  2016-12-23  next onset in   28 days
+  2016-12-28  next onset in   23 days
+  2021-05-19  next onset in   13 days
+  2024-05-08  next onset in    3 days

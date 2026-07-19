@@ -1,0 +1,38 @@
+date,event,criterion,confidence,koenig_claimed
+1991-09-12,Bush press conference demanding 120-day delay of $10B loan guarantees over settlements,d,high,0
+1991-10-30,Madrid Peace Conference opens (US-convened land-for-peace framework),a,high,1
+1991-12-10,Washington bilateral negotiations round 1 opens at State Department,a,high,0
+1992-02-24,Baker testimony conditioning loan guarantees on settlement freeze,d,medium,0
+1992-08-24,Washington bilateral negotiations round 6 opens,a,high,1
+1993-09-13,Oslo I Declaration of Principles signed on White House lawn,a,high,0
+1994-01-16,Clinton-Assad Geneva summit on Golan-for-peace,a,high,1
+1994-05-04,Gaza-Jericho (Cairo) Agreement signed with US backing,a,high,0
+1995-09-28,Oslo II interim agreement signed in Washington,a,high,0
+1997-01-15,Hebron Protocol concluded under US mediation,a,medium,0
+1998-01-20,Clinton White House meeting pressuring Netanyahu on withdrawal percentages,b,high,1
+1998-05-04,US 13-percent further-redeployment proposal made public (London),b,medium,0
+1998-10-23,Wye River Memorandum signed after US-hosted summit,a,high,1
+1999-05-04,Oslo interim-period expiry / US-managed Palestinian statehood-declaration deadline,b,medium,1
+2000-07-11,Camp David final-status summit opens (Jerusalem division on table),a,high,1
+2000-12-23,Clinton Parameters presented to both sides,b,high,0
+2001-04-30,Mitchell Report released calling for settlement freeze,b,high,0
+2001-06-13,Tenet ceasefire plan presented,b,high,1
+2001-10-02,Bush states Palestinian state part of US vision,b,high,0
+2002-03-12,UNSC Resolution 1397 (US-drafted first two-state resolution) adopted,c,high,0
+2002-06-24,Bush Rose Garden two-state speech,b,high,0
+2003-04-30,Road Map for Peace formally presented to parties,b,high,1
+2003-06-04,Aqaba summit launching Road Map implementation,a,high,0
+2004-04-14,Bush-Sharon letter endorsing Gaza withdrawal,b,medium,0
+2005-08-15,US-championed Gaza disengagement begins (evictions start),b,high,1
+2007-11-27,Annapolis Conference,a,high,0
+2008-09-13,Rice final-push shuttle round amid Annapolis process,a,low,1
+2009-05-18,Obama-Netanyahu White House meeting with public settlement-freeze demand,b,high,0
+2009-06-04,Obama Cairo speech (settlements must stop),b,high,0
+2010-03-09,US condemnation of Ramat Shlomo housing during Biden visit,b,high,0
+2010-09-02,US relaunch of direct final-status talks in Washington,a,high,0
+2011-05-19,Obama speech calling for 1967 lines as basis,b,high,1
+2013-07-29,Kerry initiative opening round in Washington,a,high,0
+2016-12-23,US abstention allowing UNSC Resolution 2334 to pass,c,high,0
+2016-12-28,Kerry farewell address on settlements,b,high,0
+2021-05-19,Biden call demanding significant de-escalation of Gaza operation,d,high,0
+2024-05-08,Biden publicly confirms pause of heavy-bomb shipment to Israel,d,high,0
