@@ -1,5 +1,5 @@
 NOAA onsets since 1991: 363 (through 2024-10-09)
-FEMA unique natural-disaster onset days since 1991: 1423 (through 2026-06-17)
+FEMA unique natural-disaster onset days since 1991: 1428 (through 2026-07-21)
 
 list       dataset                win   hits  expected  p(shift)  p(yshuf)   q(FDR)
 PRESSURE   NOAA billion-dollar    +3d   5/37       4.2    0.4200    0.4170   0.8989
