@@ -5,6 +5,7 @@ onsets, plus permutation-null distributions for the headline tests.
 Follows the sibling-repo convention (make_plots.py, headless Agg).
 """
 import random
+import csv
 from datetime import date, timedelta
 
 import matplotlib
@@ -29,10 +30,12 @@ SEED = 20260719
 
 
 def null_counts(events, onsets, lo, hi, start, end, rng):
-    period = (end - start).days
+    start, end = A.eligible_interval(start, end, lo, hi)
+    events = [event for event in events if start <= event <= end]
+    period = (end - start).days + 1
     out = []
     for _ in range(N_PERM_FIG):
-        fake = A.circ_shift(events, start, period, rng.randint(1, period - 1))
+        fake = A.circ_shift(events, start, period, rng.randrange(period))
         out.append(A.hits(fake, onsets, lo, hi))
     return out
 
@@ -43,17 +46,17 @@ def year_frac(dt):
 
 def main():
     rng = random.Random(SEED)
-    start = date(1991, 1, 1)
-    noaa_all = [x for x in A.load_noaa() if x >= start]
-    fema_all = [x for x in A.load_fema() if x >= start]
-    noaa_end = min(max(noaa_all), date(2024, 12, 31))
-    fema_end = min(max(fema_all), date(2025, 12, 31))
-    noaa, fema = set(noaa_all), set(fema_all)
-
+    datasets = A.historical_datasets()
+    _, noaa, start, noaa_end = datasets[0]
+    _, fema, _, fema_end = datasets[1]
     press = A.load_events("us_pressure_events.csv", noaa_end)
     press_f = A.load_events("us_pressure_events.csv", fema_end)
     pro = A.load_events("us_proisrael_events.csv", noaa_end)
     pro_f = A.load_events("us_proisrael_events.csv", fema_end)
+    results = list(csv.DictReader(open(A.DATA / "test_results.csv")))
+    def ptext(list_name, dataset, window):
+        row=next(r for r in results if r['lst']==list_name and r['ds']==dataset and r['w']==window)
+        return f"{row['tail']} p={float(row['p']):.3f}; q={float(row['q']):.3f}"
 
     def near(e, onsets, lo, hi):
         return any((e + timedelta(days=k)) in onsets for k in range(lo, hi + 1))
@@ -79,14 +82,14 @@ def main():
     ax.set_ylim(0.2, 3.35)
     ax.set_yticks([])
     for label, y, col in [("Billion-dollar disaster onsets (NOAA)", 2.88, MUTED),
-                          ("US pressure on Israel (37 events)", 1.78, BLUE),
-                          ("US pro-Israel actions (12 events)", 0.98, GREEN)]:
+                          (f"US pressure on Israel ({len(press)} curated events)", 1.78, BLUE),
+                          (f"US pro-Israel actions ({len(pro)} curated events)", 0.98, GREEN)]:
         ax.text(1991.0, y, label, fontsize=9.5, color=col, va="bottom")
     ax.tick_params(axis="x", colors=MUTED, labelsize=9)
     for s in ("top", "right", "left"):
         ax.spines[s].set_visible(False)
     ax.spines["bottom"].set_color(BASE)
-    ax.set_title("Every event, every disaster, 1991–2024",
+    ax.set_title("Curated diplomatic events and disaster onsets, 1991–2024",
                  loc="left", fontsize=11, color=INK, pad=24)
     ax.legend(handles=[
         Line2D([], [], marker="o", ls="", mfc=BLUE, mec=BLUE, ms=7,
@@ -99,17 +102,18 @@ def main():
     # ---- Panel B: null distributions vs observed ------------------------
     tests = [
         ("Pressure → NOAA, +7d", press, noaa, 0, 7, start, noaa_end, BLUE,
-         "p=0.69"),
+         ptext("PRESSURE", "NOAA billion-dollar", "+7d")),
         ("Pressure → NOAA, ±3d", press, noaa, -3, 3, start, noaa_end, BLUE,
-         "p=0.15"),
+         ptext("PRESSURE", "NOAA billion-dollar", "±3d")),
         ("Pressure → FEMA, +7d", press_f, fema, 0, 7, start, fema_end, BLUE,
-         "p=0.010 · q=0.17"),
+         ptext("PRESSURE", "FEMA declarations", "+7d")),
         ("Pro-Israel → FEMA, +7d", pro_f, fema, 0, 7, start, fema_end, GREEN,
-         "p=0.94"),
+         ptext("PRO-ISRAEL", "FEMA declarations", "+7d")),
     ]
     for i, (title, evs, ons, lo, hi, s0, s1, col, ptxt) in enumerate(tests):
         axb = fig.add_subplot(gs[1, i])
         axb.set_facecolor(SURFACE)
+        evs = A.eligible_events(evs, s0, s1, lo, hi)
         obs = A.hits(evs, ons, lo, hi)
         nc = null_counts(evs, ons, lo, hi, s0, s1, rng)
         kmin, kmax = min(nc + [obs]), max(nc + [obs])
@@ -124,7 +128,7 @@ def main():
                      xytext=(-5 if left_side else 5, 0),
                      textcoords="offset points", fontsize=8.5, color=col,
                      ha="right" if left_side else "left", va="top")
-        axb.set_title(f"{title}\nchance alone: gray · {ptxt}",
+        axb.set_title(f"{title}\n{ptxt}",
                       loc="left", fontsize=9, color=INK2, pad=6)
         axb.tick_params(colors=MUTED, labelsize=8, length=3)
         for s in ("top", "right", "left"):
@@ -137,8 +141,8 @@ def main():
         axb.set_xlabel("events with a disaster in window", fontsize=8.5,
                        color=MUTED)
 
-    fig.suptitle("US pressure on Israel vs US disasters: hit rates match chance"
-                 " (no test survives FDR, min q = 0.17)",
+    fig.suptitle("US diplomacy and disasters: historical association tests"
+                 f" (minimum shift BH q = {min(float(r['q']) for r in results):.3f})",
                  x=0.06, ha="left", fontsize=13.5, color=INK, y=0.965)
     (A.HERE / "figures").mkdir(exist_ok=True)
     out = A.HERE / "figures" / "figure.png"
