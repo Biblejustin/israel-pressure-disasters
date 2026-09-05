@@ -4,6 +4,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 PY="${PYTHON:-$HERE/../venv/bin/python}"
 [ -x "$PY" ] || PY=python3
+PY="$("$PY" -c 'import sys; print(sys.executable)')"
 export MPLBACKEND=Agg
 STAGE="$(mktemp -d "$HERE/.refresh.XXXXXX")"
 trap 'rm -rf "$STAGE"' EXIT
