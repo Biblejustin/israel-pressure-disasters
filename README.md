@@ -1,83 +1,74 @@
-# israel-pressure-disasters
+# Israel diplomacy and disaster timing
 
-Statistical test of the Koenig/McTernan claim (*Eye to Eye: Facing the
-Consequences of Dividing Israel*) that US disasters follow US diplomatic
-pressure on Israel within days.
+Historical exploratory test of whether US diplomatic pressure on Israel precedes
+more US disaster onsets, with a separately specified deficit hypothesis for the
+pro-Israel action list. Biblical and political interpretations remain distinct
+from measured disaster timing.
 
-## Design
+## Current corrected result
 
-The claim's published form is an anthology of hits with no denominator. This
-test supplies both denominators:
+Recomputed September 4, 2026 (America/Chicago), using the declared **1991–2024**
+historical study period. No circular-shift test survives BH correction across
+20 tests; minimum q = **0.1695**. FEMA +7-day pressure association: 27/37 events,
+upper-tail p = **0.0104**, q = **0.1695**. Pro-Israel FEMA +7-day deficit test:
+4/12 events, **lower-tail p = 0.1491**, q = **0.5021**.
 
-1. **A neutral diplomatic event list** ([data/us_pressure_events.csv](data/us_pressure_events.csv)),
-   compiled from the documented diplomatic record **before consulting any
-   disaster data**. Inclusion criteria, 1991-2024:
-   - (a) US-convened or US-brokered negotiation milestones premised on Israeli
-     territorial concession;
-   - (b) public US demands, proposals, or speeches calling for Israeli
-     territorial concession or settlement halt;
-   - (c) UNSC actions where the US supported or declined to veto such measures;
-   - (d) material pressure (loan-guarantee or arms conditioning, ceasefire
-     ultimatums).
+These results do not establish a disaster response to diplomacy, and do not
+establish independence. Event selection, limited controls and small samples
+remain substantial limitations. Prior July outputs used the wrong upper tail
+for the deficit hypothesis; archived results preserve that original run.
 
-   Every event Koenig's ecosystem claims as a "hit" that meets these criteria
-   is included (flagged `koenig_claimed=1`), alongside the comparable events
-   his anthology omits.
-2. **Complete disaster records**, two severity tiers:
-   - NOAA billion-dollar weather/climate disasters (onset = Begin Date;
-     note: excludes earthquakes by design, coverage through 2024);
-   - FEMA major disaster declarations, natural incident types only, deduped
-     to unique incident-onset days.
+[Full generated results](data/test_results.csv) · [Readable run](data/latest_run.txt)
 
-**Controls:** a pro-Israel action list ([data/us_proisrael_events.csv](data/us_proisrael_events.csv))
-run through the identical test (the thesis predicts a deficit there), plus
-[data/koenig_claimed_pairs.csv](data/koenig_claimed_pairs.csv), which documents
-the anthology's own pairs with notes on category elasticity (non-disasters like
-the Lewinsky story and the Lehman collapse; disasters that began *before* their
-claimed trigger; flagship storms below the billion-dollar threshold).
+![Corrected historical analysis](figures/figure.png)
 
-**Test:** for windows +3/+7/+14 days after each event (and ±3/±7 symmetric,
-since several claimed pairs have the disaster preceding the action), count
-events with at least one disaster onset in window. Null distribution: 20,000
-circular shifts of the whole event list across 1991-present (preserves event
-spacing and disaster seasonality/clustering); robustness null: year-shuffle
-keeping month/day. Benjamini-Hochberg FDR across all 20 tests, matching the
-`../correlations` convention.
+## Reproducible design
 
-## Result (run 2026-07-19)
+- Fixed historical study bounds and catalog coverage live in
+  [data/coverage.json](data/coverage.json). NOAA coverage follows its CSV header,
+  through December 2024. FEMA is capped to the same historical study period.
+  Latest qualifying event onset never determines completeness.
+- Pressure hypothesis uses upper tail; pro-Israel deficit hypothesis uses lower
+  tail. Both include equality. Five windows: +3/+7/+14 days and ±3/±7 days.
+- Events enter a test only if the entire response window lies inside observed
+  coverage. The same eligible date interval defines null simulations and baseline
+  exposure. All date endpoints are inclusive.
+- 20,000 seeded circular shifts preserve event spacing on the eligible date
+  circle. Year-shuffle sensitivity preserves month/day and samples only valid
+  years, including the final year when its response window is covered.
+- Two lists × two datasets × five windows = 20 tests. BH q-values are reported
+  separately for shift and year-shuffle nulls. Multiple overlapping windows
+  limit interpretation of independence; shifts assume timing exchangeability
+  that long-term policy and disaster-rate changes can violate.
+- FEMA natural incidents are deduplicated to onset days; NOAA billion-dollar
+  weather/climate disasters exclude earthquakes by definition.
 
-**No test survives FDR correction (min q = 0.17).** Full table in
-[results/run_2026-07-19.txt](results/run_2026-07-19.txt).
+## Curation boundary
 
-- At the billion-dollar tier, where the claim's flagship disasters live,
-  pressure events are followed by disasters at almost exactly the chance rate
-  (e.g. +7d: 7 hits observed, 7.9 expected, p = 0.69).
-- The single suggestive cell is FEMA declarations at +7d (27/37 observed vs
-  19.4 expected, raw p = 0.010) but it does not survive correction
-  (q = 0.17), does not replicate at the severity tier the claim is actually
-  about, and FEMA-declaration onsets are so frequent (~41 onset-days/year)
-  that 52% of *all* weeks contain one.
-- The pro-Israel control shows no significant blessing-deficit either
-  (4/12 vs 6.3 expected at +7d, p = 0.94; n = 12 is underpowered).
+The existing diplomatic CSVs remain unchanged. Their historical inclusion rules
+cover territorial-concession negotiations, public demands, relevant UNSC votes,
+and material aid/arms conditions. The pressure list has 37 selected events and
+the control has 12. Their per-row primary-source links and decision timestamps
+are missing, and neither completeness nor original outcome-blind curation has
+been independently established. Political labels compress distinct policies.
 
-Interpretation: the anthology's famous pairings are genuine coincidences of
-timing, but the *rate* of such pairings is indistinguishable from what a
-dartboard produces once every pressure event is counted instead of only the
-memorable ones.
+This is a frozen historical selection, **not a current diplomacy monitor**.
+Extending it requires documented primary sources, publication/decision dates,
+issue-specific coding and inclusion reasons recorded before future outcomes.
+A disagreement about policy is not itself evidence of religious motive.
+The curated [claimed-pairs audit](data/koenig_claimed_pairs.csv) is preserved.
 
-## Rerun
+## Run
 
-```
-bash update.sh        # guarded NOAA/FEMA refresh -> analyze -> figure
-python3 analyze.py    # analysis only (stdlib, deterministic/seeded)
+```bash
+python analyze.py
+python make_plots.py
+python -m unittest discover -s tests -v
+bash update.sh
 ```
 
-Latest results: [data/latest_run.txt](data/latest_run.txt) and
-[figures/figure.png](figures/figure.png); the 2026-07-19 baseline run is
-archived in `results/`.
-
-This repo is part of the signs-tracking family: the VPS `signs-update.timer`
-runs `correlations/weekly_update.sh` weekly, which fetches, re-tests,
-regenerates the figure, and commits data deltas here automatically. Append
-post-2024 diplomatic events to the CSVs by hand as they occur (e.g. the
-2025-26 peace-plan milestones); the update never edits the curated lists.
+`update.sh` refreshes disaster catalogs but never expands curated event lists or
+the historical study interval. Figures read generated p/q values rather than
+hard-coded conclusions. Source definitions:
+[NOAA](https://www.ncei.noaa.gov/access/billions/) and
+[FEMA OpenFEMA](https://www.fema.gov/openfema-data-page/disaster-declarations-summaries-v2).

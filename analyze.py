@@ -18,7 +18,8 @@ window) tests, matching the correlations-hub convention.
 
 Stdlib only. Deterministic (seeded).
 """
-import csv, random, sys
+import csv, random, sys, json, hashlib
+from datetime import datetime, timezone
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -39,7 +40,8 @@ def d(s):
     return date.fromisoformat(s[:10])
 
 def load_noaa():
-    rows = list(csv.reader(open(DATA / "noaa_billion_dollar_events.csv")))
+    with open(DATA / "noaa_billion_dollar_events.csv") as handle:
+        rows = list(csv.reader(handle))
     hdr = next(i for i, r in enumerate(rows) if r and r[0] == "Name")
     cols = {c: j for j, c in enumerate(rows[hdr])}
     out = []
@@ -93,18 +95,53 @@ def year_shuffle(event_dates, rng, y0, y1):
             out.append(date(y, e.month, 28))
     return out
 
-def perm_p(event_dates, onset_set, lo, hi, start, end, rng, mode):
-    period = (end - start).days
-    obs = hits(event_dates, onset_set, lo, hi)
-    ge = 0
+def eligible_interval(start, end, lo, hi):
+    """Inclusive candidate event dates with fully observed response windows."""
+    return start - timedelta(days=min(lo, 0)), end - timedelta(days=max(hi, 0))
+
+
+def eligible_events(events, start, end, lo, hi):
+    first, last = eligible_interval(start, end, lo, hi)
+    return [event for event in events if first <= event <= last]
+
+
+def hit_days(onset_set, lo, hi, start, end):
+    return {onset-timedelta(days=k) for onset in onset_set for k in range(lo,hi+1)
+            if start <= onset-timedelta(days=k) <= end}
+
+
+def perm_p(event_dates, onset_set, lo, hi, start, end, rng, mode, tail="upper"):
+    if tail not in {"upper", "lower"}:
+        raise ValueError("Hypothesis tail must be upper or lower")
+    first, last = eligible_interval(start, end, lo, hi)
+    event_dates = eligible_events(event_dates, start, end, lo, hi)
+    period = (last-first).days+1
+    if period < 2 or not event_dates:
+        raise ValueError("Insufficient fully observed exposure")
+    possible = hit_days(onset_set, lo, hi, first, last)
+    hit_offsets = {(day-first).days for day in possible}
+    event_offsets = [(day-first).days for day in event_dates]
+    obs = sum(day in possible for day in event_dates)
+    extreme = 0
+    # Each candidate year must keep the whole window inside coverage.
+    year_options = []
+    for event in event_dates:
+        options=[]
+        for year in range(first.year, last.year+1):
+            try: candidate=date(year,event.month,event.day)
+            except ValueError: candidate=date(year,event.month,28)
+            if first <= candidate <= last: options.append(candidate)
+        year_options.append(options)
     for _ in range(N_PERM):
         if mode == "shift":
-            fake = circ_shift(event_dates, start, period, rng.randint(1, period - 1))
+            offset=rng.randrange(period)  # identity included in uniform null
+            sim=sum((event+offset)%period in hit_offsets for event in event_offsets)
+        elif mode == "yshuf":
+            sim=sum(rng.choice(options) in possible for options in year_options)
         else:
-            fake = year_shuffle(event_dates, rng, start.year, end.year - 1)
-        if hits(fake, onset_set, lo, hi) >= obs:
-            ge += 1
-    return obs, (ge + 1) / (N_PERM + 1)
+            raise ValueError("Unknown null mode")
+        extreme += (sim >= obs) if tail == "upper" else (sim <= obs)
+    return obs, (extreme+1)/(N_PERM+1)
 
 def bh_fdr(pvals):
     m = len(pvals)
@@ -118,42 +155,58 @@ def bh_fdr(pvals):
     return q
 
 def base_rate(onset_set, lo, hi, start, end):
-    n_days = (end - start).days
-    covered = sum(
-        1 for k in range(n_days)
-        if any((start + timedelta(days=k + j)) in onset_set for j in range(lo, hi + 1))
-    )
-    return covered / n_days
+    first,last=eligible_interval(start,end,lo,hi)
+    return len(hit_days(onset_set,lo,hi,first,last))/((last-first).days+1)
+
+
+def coverage():
+    return json.loads((DATA / "coverage.json").read_text())
+
+
+def historical_datasets():
+    meta=coverage()
+    start=d(meta["study_start"])
+    end=d(meta["study_end"])
+    out=[]
+    for key,label,loader in [("noaa","NOAA billion-dollar",load_noaa),("fema","FEMA declarations",load_fema)]:
+        first=max(start,d(meta[key]["start"]))
+        last=min(end,d(meta[key]["end"]))
+        out.append((label,set(day for day in loader() if first<=day<=last),first,last))
+    return out
 
 def main():
     rng = random.Random(SEED)
-    noaa = load_noaa()
-    fema = load_fema()
-    noaa_end = max(noaa)
-    fema_end = max(fema)
-    start = date(1991, 1, 1)
-    datasets = [
-        ("NOAA billion-dollar", set(x for x in noaa if x >= start), min(noaa_end, date(2024, 12, 31))),
-        ("FEMA declarations", set(x for x in fema if x >= start), min(fema_end, date(2025, 12, 31))),
-    ]
-    print(f"NOAA onsets since 1991: {sum(1 for x in noaa if x >= start)} (through {noaa_end})")
-    print(f"FEMA unique natural-disaster onset days since 1991: {sum(1 for x in fema if x >= start)} (through {fema_end})")
+    meta=coverage()
+    datasets=historical_datasets()
+    print(f"Frozen historical study: {meta['study_start']} through {meta['study_end']} (inclusive)")
+    print("Pressure hypothesis: upper tail; pro-Israel deficit hypothesis: lower tail.")
+    print("Only complete response windows; missing exposure excluded from events AND null.")
+    print(f"Curation: {meta['curation_status']}")
 
     tests = []
     for list_name, fname in [("PRESSURE", "us_pressure_events.csv"),
                              ("PRO-ISRAEL", "us_proisrael_events.csv")]:
-        for ds_name, onsets, end in datasets:
+        for ds_name, onsets, start, end in datasets:
             events = load_events(fname, end)
             for wlab, lo, hi in WINDOWS:
-                obs, p = perm_p(events, onsets, lo, hi, start, end, rng, "shift")
-                _, p_ys = perm_p(events, onsets, lo, hi, start, end, rng, "yshuf")
+                selected = eligible_events(events, start, end, lo, hi)
+                tail = meta["tails"][list_name]
+                obs, p = perm_p(selected, onsets, lo, hi, start, end, rng, "shift", tail)
+                _, p_ys = perm_p(selected, onsets, lo, hi, start, end, rng, "yshuf", tail)
                 br = base_rate(onsets, lo, hi, start, end)
-                tests.append(dict(lst=list_name, ds=ds_name, w=wlab, n=len(events),
-                                  obs=obs, exp=br * len(events), p=p, p_ys=p_ys))
+                tests.append(dict(lst=list_name, ds=ds_name, w=wlab, tail=tail, n=len(selected), excluded=len(events)-len(selected),
+                                  start=start.isoformat(), end=end.isoformat(),
+                                  obs=obs, exp=br * len(selected), p=p, p_ys=p_ys))
 
     qs = bh_fdr([t["p"] for t in tests])
-    for t, q in zip(tests, qs):
-        t["q"] = q
+    for t, q, q_ys in zip(tests, qs, bh_fdr([t["p_ys"] for t in tests])):
+        t["q"], t["q_ys"] = q, q_ys
+    with open(DATA / "test_results.csv", "w") as handle:
+        writer=csv.DictWriter(handle, fieldnames=list(tests[0]))
+        writer.writeheader(); writer.writerows(tests)
+    manifest={"generated_at":datetime.now(timezone.utc).isoformat(), "design":meta, "tests":len(tests), "permutations":N_PERM, "seed":SEED,
+              "input_sha256":{name:hashlib.sha256((DATA/name).read_bytes()).hexdigest() for name in ["coverage.json","noaa_billion_dollar_events.csv","fema_declarations.csv","us_pressure_events.csv","us_proisrael_events.csv"]}}
+    (DATA/"analysis_manifest.json").write_text(json.dumps(manifest,indent=2)+"\n")
 
     print(f"\n{'list':<11}{'dataset':<22}{'win':>4}{'hits':>7}{'expected':>10}"
           f"{'p(shift)':>10}{'p(yshuf)':>10}{'q(FDR)':>9}")
@@ -165,7 +218,7 @@ def main():
     # Transparency: per-event nearest NOAA onset for the pressure list
     print("\nPer-event nearest NOAA billion-dollar onset (pressure list, days after event):")
     onsets = sorted(datasets[0][1])
-    for e in load_events("us_pressure_events.csv", datasets[0][2]):
+    for e in load_events("us_pressure_events.csv", datasets[0][3]):
         after = [(o - e).days for o in onsets if 0 <= (o - e).days]
         print(f"  {e}  next onset in {min(after) if after else 'n/a':>4} days")
 

@@ -1,27 +1,29 @@
-NOAA onsets since 1991: 363 (through 2024-10-09)
-FEMA unique natural-disaster onset days since 1991: 1429 (through 2026-08-11)
+Frozen historical study: 1991-01-01 through 2024-12-31 (inclusive)
+Pressure hypothesis: upper tail; pro-Israel deficit hypothesis: lower tail.
+Only complete response windows; missing exposure excluded from events AND null.
+Curation: Historical selection retained unchanged. Original CSVs lack per-event source URL and decision timestamp; completeness and original outcome-blind curation have not been independently established. No prospective event-monitor claim.
 
 list       dataset                win   hits  expected  p(shift)  p(yshuf)   q(FDR)
-PRESSURE   NOAA billion-dollar    +3d   5/37       4.2    0.4200    0.4170   0.8989
-PRESSURE   NOAA billion-dollar    +7d   7/37       7.9    0.6893    0.7769   0.8989
-PRESSURE   NOAA billion-dollar   +14d  12/37      13.0    0.6838    0.7888   0.8989
-PRESSURE   NOAA billion-dollar    ±3d  10/37       7.0    0.1542    0.3113   0.6150
-PRESSURE   NOAA billion-dollar    ±7d  12/37      13.0    0.6819    0.8361   0.8989
-PRESSURE   FEMA declarations      +3d  15/37      12.2    0.2022    0.3267   0.6150
-PRESSURE   FEMA declarations      +7d  27/37      19.4    0.0101    0.0235   0.1675
-PRESSURE   FEMA declarations     +14d  32/37      27.1    0.0436    0.0774   0.2907
-PRESSURE   FEMA declarations      ±3d  21/37      17.9    0.1883    0.4013   0.6150
-PRESSURE   FEMA declarations      ±7d  33/37      27.1    0.0167    0.0338   0.1675
-PRO-ISRAEL NOAA billion-dollar    +3d   1/12       1.4    0.7306    0.6563   0.8989
-PRO-ISRAEL NOAA billion-dollar    +7d   2/12       2.6    0.7046    0.5937   0.8989
-PRO-ISRAEL NOAA billion-dollar   +14d   4/12       4.2    0.6051    0.4463   0.8989
-PRO-ISRAEL NOAA billion-dollar    ±3d   4/12       2.3    0.2152    0.0744   0.6150
-PRO-ISRAEL NOAA billion-dollar    ±7d   5/12       4.2    0.4466    0.1994   0.8989
-PRO-ISRAEL FEMA declarations      +3d   3/12       3.9    0.8090    0.7236   0.8989
-PRO-ISRAEL FEMA declarations      +7d   4/12       6.3    0.9418    0.8918   0.9700
-PRO-ISRAEL FEMA declarations     +14d   6/12       8.8    0.9700    0.9566   0.9700
-PRO-ISRAEL FEMA declarations      ±3d   6/12       5.8    0.5671    0.4608   0.8989
-PRO-ISRAEL FEMA declarations      ±7d   8/12       8.8    0.7947    0.7356   0.8989
+PRESSURE   NOAA billion-dollar    +3d   5/37       4.2    0.4129    0.4684   0.7508
+PRESSURE   NOAA billion-dollar    +7d   7/37       7.8    0.6780    0.8062   0.7534
+PRESSURE   NOAA billion-dollar   +14d  12/37      12.9    0.6678    0.8210   0.7534
+PRESSURE   NOAA billion-dollar    ±3d  10/37       7.0    0.1552    0.3553   0.5021
+PRESSURE   NOAA billion-dollar    ±7d  12/37      12.9    0.6699    0.8697   0.7534
+PRESSURE   FEMA declarations      +3d  15/37      12.2    0.2008    0.3279   0.5021
+PRESSURE   FEMA declarations      +7d  27/37      19.5    0.0104    0.0247   0.1695
+PRESSURE   FEMA declarations     +14d  32/37      27.2    0.0544    0.0777   0.3630
+PRESSURE   FEMA declarations      ±3d  21/37      17.9    0.1984    0.3963   0.5021
+PRESSURE   FEMA declarations      ±7d  33/37      27.2    0.0169    0.0355   0.1695
+PRO-ISRAEL NOAA billion-dollar    +3d   1/12       1.4    0.5982    0.7173   0.7534
+PRO-ISRAEL NOAA billion-dollar    +7d   2/12       2.5    0.5238    0.7041   0.7534
+PRO-ISRAEL NOAA billion-dollar   +14d   4/12       4.2    0.5643    0.7679   0.7534
+PRO-ISRAEL NOAA billion-dollar    ±3d   4/12       2.3    0.9096    0.9838   0.9096
+PRO-ISRAEL NOAA billion-dollar    ±7d   5/12       4.2    0.7297    0.9267   0.7681
+PRO-ISRAEL FEMA declarations      +3d   3/12       4.0    0.3986    0.5226   0.7508
+PRO-ISRAEL FEMA declarations      +7d   4/12       6.3    0.1491    0.2583   0.5021
+PRO-ISRAEL FEMA declarations     +14d   6/12       8.8    0.0781    0.1378   0.3907
+PRO-ISRAEL FEMA declarations      ±3d   6/12       5.8    0.6573    0.7592   0.7534
+PRO-ISRAEL FEMA declarations      ±7d   8/12       8.8    0.3837    0.5082   0.7508
 
 Per-event nearest NOAA billion-dollar onset (pressure list, days after event):
   1991-09-12  next onset in   19 days
